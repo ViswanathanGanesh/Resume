@@ -32,8 +32,6 @@ jobs:
           mkdir -p build
           touch build/.nojekyll
           cp main.pdf "build/Viswanathan_Ganesh_Resume.pdf"
-          cp main.pdf "build/resume.pdf"
-          cp main.pdf "build/Kevin Wu Resume.pdf"
           cat << 'EOF' > build/index.html
           <!DOCTYPE html>
           <html lang="en">

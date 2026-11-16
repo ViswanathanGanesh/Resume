@@ -9,6 +9,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build and commit the PDF
@@ -16,22 +19,96 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Compile resume
-        uses: xu-cheng/latex-action@v2
+        uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
+          latexmk_use_xelatex: true
 
-      - name: View logs
-        run: cat main.log
-
-      - name: Move PDF
+      - name: Prepare build directory for GitHub Pages
         run: |
-          mkdir build
-          mv main.pdf 'build/Kevin Wu Resume.pdf'
+          mkdir -p build
+          cp main.pdf "build/Viswanathan_Ganesh_Resume.pdf"
+          cp main.pdf "build/resume.pdf"
+          cp main.pdf "build/Kevin Wu Resume.pdf"
+          cat << 'EOF' > build/index.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Viswanathan Ganesh - Resume</title>
+            <style>
+              * { box-sizing: border-box; }
+              html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: #525659;
+              }
+              .header {
+                background-color: #323639;
+                color: #fff;
+                padding: 10px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 52px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+              }
+              .title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+              }
+              .btn {
+                background-color: #2563eb;
+                color: white;
+                text-decoration: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                transition: background-color 0.2s ease;
+              }
+              .btn:hover {
+                background-color: #1d4ed8;
+              }
+              .viewer {
+                width: 100%;
+                height: calc(100% - 52px);
+              }
+              iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <div class="title">Viswanathan Ganesh &mdash; Resume</div>
+              <a href="Viswanathan_Ganesh_Resume.pdf" download class="btn">Download PDF</a>
+            </div>
+            <div class="viewer">
+              <iframe src="Viswanathan_Ganesh_Resume.pdf#toolbar=1" type="application/pdf">
+                <p style="color: white; text-align: center; margin-top: 50px;">
+                  Your browser does not support inline PDF viewing. 
+                  <a href="Viswanathan_Ganesh_Resume.pdf" style="color: #60a5fa;">Click here to download or view the PDF directly.</a>
+                </p>
+              </iframe>
+            </div>
+          </body>
+          </html>
+          EOF
 
       - name: Push build
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self

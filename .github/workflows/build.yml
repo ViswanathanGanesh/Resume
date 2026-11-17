@@ -32,11 +32,14 @@ jobs:
           mkdir -p build
           touch build/.nojekyll
           cp main.pdf "build/Viswanathan_Ganesh_Resume.pdf"
-          cat << 'EOF' > build/index.html
+          cat << EOF > build/index.html
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
+            <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+            <meta http-equiv="Pragma" content="no-cache">
+            <meta http-equiv="Expires" content="0">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Viswanathan Ganesh - Resume</title>
             <style>
@@ -92,13 +95,13 @@ jobs:
           <body>
             <div class="header">
               <div class="title">Viswanathan Ganesh &mdash; Resume</div>
-              <a href="Viswanathan_Ganesh_Resume.pdf" download class="btn">Download PDF</a>
+              <a href="Viswanathan_Ganesh_Resume.pdf?v=${{ github.sha }}" download="Viswanathan_Ganesh_Resume.pdf" class="btn">Download PDF</a>
             </div>
             <div class="viewer">
-              <iframe src="Viswanathan_Ganesh_Resume.pdf#toolbar=1" type="application/pdf">
+              <iframe src="Viswanathan_Ganesh_Resume.pdf?v=${{ github.sha }}#toolbar=1" type="application/pdf">
                 <p style="color: white; text-align: center; margin-top: 50px;">
                   Your browser does not support inline PDF viewing. 
-                  <a href="Viswanathan_Ganesh_Resume.pdf" style="color: #60a5fa;">Click here to download or view the PDF directly.</a>
+                  <a href="Viswanathan_Ganesh_Resume.pdf?v=${{ github.sha }}" style="color: #60a5fa;">Click here to download or view the PDF directly.</a>
                 </p>
               </iframe>
             </div>
